@@ -1,0 +1,25 @@
+kind: Column
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column
+  namespace: {{ .Values.global.compositionNamespace }}
+spec: 
+  widgetData:
+    actions: {}
+    items:
+      - resourceRefId: panel-1
+      - resourceRefId: panel-2
+  resourcesRefs:
+    items:
+    - id: panel-1
+      apiVersion: widgets.templates.krateo.io/v1beta1
+      name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1
+      namespace: {{ .Values.global.compositionNamespace }}
+      resource: panels
+      verb: GET
+    - id: panel-2
+      apiVersion: widgets.templates.krateo.io/v1beta1
+      name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2
+      namespace: {{ .Values.global.compositionNamespace }}
+      resource: panels
+      verb: GET

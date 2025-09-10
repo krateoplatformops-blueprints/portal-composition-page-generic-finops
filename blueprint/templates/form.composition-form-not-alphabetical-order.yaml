@@ -1,0 +1,45 @@
+{{- if eq .Values.form.alphabeticalOrder false }}
+kind: Form
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-form-not-alphabetical-order
+  namespace: {{ .Values.global.compositionNamespace }}
+spec:
+  widgetData:
+    schema: {}
+    submitActionId: update-action-from-string-schema
+    actions:
+      rest:
+        - id: update-action-from-string-schema
+          onEventNavigateTo:
+            eventReason: "CompositionUpdated"
+            url: "/compositions/${metadata.namespace}/${metadata.name}"            
+            timeout: 50
+          payloadKey: spec
+          successMessage: '${"Successfully updated " + .response.metadata.name + " composition in namespace " + .response.metadata.namespace }'
+          errorMessage: '${"Composition update failed" }'
+          resourceRefId: composition-to-patch
+          type: rest
+          # payloadToOverride:
+          # - name: metadata.name
+          #   value: ""
+          # - name: metadata.namespace
+          #   value: ""
+          headers:
+          - "Content-Type: application/merge-patch+json"
+  widgetDataTemplate:
+    - forPath: stringSchema
+      expression: >
+        ${ import "custom" as c; c::update_string_schema_defaults(.) }
+  resourcesRefs:
+    items:
+    - id: composition-to-patch
+      apiVersion: composition.krateo.io/{{ .Values.global.compositionInstalledVersion }}
+      namespace: {{ .Values.global.compositionNamespace }}
+      name: {{ .Values.global.compositionName }}
+      resource: {{ .Values.global.compositionResource }}
+      verb: PATCH
+  apiRef:
+    name: {{ .Values.global.compositionName }}-composition-schema
+    namespace: {{ .Values.global.compositionNamespace }}
+{{- end }}

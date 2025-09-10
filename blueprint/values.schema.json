@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "form": {
+      "additionalProperties": false,
+      "description": "Blueprint form properties",
+      "properties": {
+        "alphabeticalOrder": {
+          "default": false,
+          "description": "Blueprint form keys order",
+          "title": "alphabeticalOrder",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "alphabeticalOrder"
+      ],
+      "title": "form",
+      "type": "object"
+    },
+    "global": {
+      "additionalProperties": true,
+      "description": "global properties section - if the Helm chart is installed via Composition Dynamic Controller, these are injected by default",
+      "properties": {
+        "compositionApiVersion": {
+          "default": "composition.krateo.io/v0-0-1",
+          "description": "Composition Custom Resource apiVersion",
+          "examples": [
+            "composition.krateo.io/v0-0-1"
+          ],
+          "title": "compositionApiVersion",
+          "type": "string"
+        },
+        "compositionGroup": {
+          "default": "composition.krateo.io",
+          "description": "Composition Custom Resource group",
+          "examples": [
+            "composition.krateo.io"
+          ],
+          "title": "compositionGroup",
+          "type": "string"
+        },
+        "compositionId": {
+          "default": "a4a524f7-33a9-4d71-96d5-9e9b7daa3a42",
+          "description": "Composition Custom Resource metadata uid",
+          "examples": [
+            "a4a524f7-33a9-4d71-96d5-9e9b7daa3a42"
+          ],
+          "title": "compositionId",
+          "type": "string"
+        },
+        "compositionInstalledVersion": {
+          "default": "v0-0-1",
+          "description": "Composition Custom Resource installed version",
+          "examples": [
+            "v0-0-1"
+          ],
+          "title": "compositionInstalledVersion",
+          "type": "string"
+        },
+        "compositionKind": {
+          "default": "FinOpsScaffolding",
+          "description": "Composition Custom Resource kind",
+          "examples": [
+            "GithubScaffolding"
+          ],
+          "title": "compositionKind",
+          "type": "string"
+        },
+        "compositionName": {
+          "default": "test",
+          "description": "Composition Custom Resource metadata name",
+          "examples": [
+            "test"
+          ],
+          "title": "compositionName",
+          "type": "string"
+        },
+        "compositionNamespace": {
+          "default": "demo-system",
+          "description": "Composition Custom Resource metadata namespace",
+          "examples": [
+            "demo-system"
+          ],
+          "title": "compositionNamespace",
+          "type": "string"
+        },
+        "compositionResource": {
+          "default": "finopsscaffoldings",
+          "description": "Composition Custom Resource plural name",
+          "examples": [
+            "githubscaffoldings"
+          ],
+          "title": "compositionResource",
+          "type": "string"
+        },
+        "gracefullyPaused": {
+          "default": false,
+          "description": "composition graceful pause",
+          "examples": [
+            "false"
+          ],
+          "title": "gracefullyPaused",
+          "type": "boolean"
+        },
+        "krateoNamespace": {
+          "default": "krateo-system",
+          "description": "namespace where Krateo is installed",
+          "examples": [
+            "krateo-system"
+          ],
+          "title": "krateoNamespace",
+          "type": "string"
+        }
+      },
+      "title": "global",
+      "type": "object"
+    }
+  },
+  "required": [
+    "form"
+  ],
+  "type": "object"
+}

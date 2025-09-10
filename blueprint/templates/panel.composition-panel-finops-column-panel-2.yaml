@@ -1,0 +1,26 @@
+kind: Panel
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2
+  namespace: {{ .Values.global.compositionNamespace }}
+spec:
+  widgetData:
+    actions: {}
+    title: Usage and Optimization
+    items:
+      - resourceRefId: row-1
+      - resourceRefId: row-2
+  resourcesRefs:
+    items:
+    - id:  row-1
+      apiVersion: widgets.templates.krateo.io/v1beta1
+      name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1
+      namespace: {{ .Values.global.compositionNamespace }}
+      resource: rows
+      verb: GET
+    - id:  row-2
+      apiVersion: widgets.templates.krateo.io/v1beta1
+      name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-2-paragraph
+      namespace: {{ .Values.global.compositionNamespace }}
+      resource: paragraphs
+      verb: GET

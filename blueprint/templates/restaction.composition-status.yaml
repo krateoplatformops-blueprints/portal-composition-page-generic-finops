@@ -1,0 +1,277 @@
+apiVersion: templates.krateo.io/v1
+kind: RESTAction
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-status
+  namespace: {{ .Values.global.compositionNamespace }}
+spec:
+  api:
+  - name: getComposition
+    path: "/apis/{{ .Values.global.compositionGroup }}/{{ .Values.global.compositionInstalledVersion }}/namespaces/{{ .Values.global.compositionNamespace }}/{{ .Values.global.compositionResource }}/{{ .Values.global.compositionName }}"
+    verb: GET
+    filter: ".getComposition"
+  - name: allCompositionResources
+    dependsOn:
+      iterator: .getComposition.status.managed
+      name: getComposition
+    path: ${ (.path) }
+  filter: >
+    (
+      .allCompositionResources
+      # Apply exclusion filters
+      | map(select(
+          (
+            (.apiVersion | startswith("widgets.templates.krateo.io/")) or
+            (.apiVersion == "templates.krateo.io/v1" and .kind == "RESTAction") or
+            (.apiVersion == "v1" and .kind == "ConfigMap")
+          ) | not
+        ))
+      # Map resources to desired structure
+      | map(
+          . as $item
+          | {
+              version: ($item.apiVersion // ""),
+              kind: ($item.kind // ""),
+              namespace: ($item.metadata.namespace // null),
+              name: ($item.metadata.name // ""),
+              parentRefs: [
+                {
+                  version: "{{ .Values.global.compositionGroup }}/{{ .Values.global.compositionInstalledVersion }}",
+                  kind: "{{ .Values.global.compositionKind }}",
+                  namespace: "{{ .Values.global.compositionNamespace }}",
+                  name: "{{ .Values.global.compositionName }}",
+                  parentRefs: [ {} ],
+                  uid: "{{ .Values.global.compositionId}}"
+                }
+              ],
+              uid: ($item.metadata.uid // null),
+              resourceVersion: ($item.metadata.resourceVersion // null),
+              date: ($item.metadata.creationTimestamp // null),
+              statusIcon: (
+                # If a Ready condition exists → map it
+                if ($item.status.conditions? // [] | map(select(.type == "Ready")) | length) > 0 then
+                  (
+                    $item.status.conditions[]
+                    | select(.type == "Ready")
+                    | if .status == "True" then
+                        { name: "fa-check",                 color: "#52c41a", message: (.message // ""), isReady: "true" }
+                      elif .status == "False" then
+                        { name: "fa-triangle-exclamation", color: "#fa8c16", message: (.message // ""), isReady: "false" }
+                      else
+                        { name: "fa-circle",               color: "#6c757d", message: (.message // ""), isReady: "false" }
+                      end
+                  )
+
+                # Else check kind+version specific cases
+                elif ($item.kind == "Application" and $item.apiVersion == "argoproj.io/v1alpha1") then
+                  (
+                    if (($item.status.health.status // "" | ascii_downcase) == "healthy") then
+                      { name: "fa-check",                 color: "#52c41a", message: ($item.status.health.status // ""), isReady: "true" }
+                    else
+                      { name: "fa-triangle-exclamation", color: "#fa8c16", message: ($item.status.health.status // ""), isReady: "false" }
+                    end
+                  )
+
+                # Else if conditions exist → take the first element
+                elif ($item.status.conditions? | length > 0) then
+                  (
+                    $item.status.conditions[0]
+                    | if .status == "True" then
+                        { name: "fa-check",                 color: "#52c41a", message: (.message // ""), isReady: "true" }
+                      elif .status == "False" then
+                        { name: "fa-triangle-exclamation", color: "#fa8c16", message: (.message // ""), isReady: "false" }
+                      else
+                        { name: "fa-circle",               color: "#6c757d", message: (.message // ""), isReady: "false" }
+                      end
+                  )
+
+                # Else → fallback: status not available
+                else
+                  { name: "fa-circle", color: "#6c757d", message: "Status not available", isReady: "false" }
+
+                end
+              ),
+              icon: (
+                # Kind-based icon object
+                if "{{ .Values.global.compositionKind }}" == "Application" then
+                  { name: "fa-diagram-project", color: "#1890ff" }
+                elif "{{ .Values.global.compositionKind }}" == "Deployment" then
+                  { name: "fa-box", color: "#1890ff" }
+                elif "{{ .Values.global.compositionKind }}" == "Service" then
+                  { name: "fa-network-wired", color: "#1890ff" }
+                elif "{{ .Values.global.compositionKind }}" == "ConfigMap" then
+                  { name: "fa-file-lines", color: "#1890ff" }
+                elif "{{ .Values.global.compositionKind }}" == "Secret" then
+                  { name: "fa-key", color: "#1890ff" }
+                else
+                  { name: "fa-cubes", color: "#1890ff" }
+                end
+              )
+            }
+        )
+    ) as $nodes
+    | {
+        nodes:
+          (
+            [
+              {
+                date: .getComposition.metadata.creationTimestamp,
+                statusIcon: (
+                  # If a Ready condition exists → map it
+                  if (.getComposition.status.conditions? // [] | map(select(.type == "Ready")) | length) > 0 then
+                    (
+                      .getComposition.status.conditions[]
+                      | select(.type == "Ready")
+                      | if .status == "True" then
+                          { name: "fa-check",                 color: "#52c41a", message: (.message // ""), isReady: "true" }
+                        elif .status == "False" then
+                          { name: "fa-triangle-exclamation", color: "#fa8c16", message: (.message // ""), isReady: "false" }
+                        else
+                          { name: "fa-circle",               color: "#6c757d", message: (.message // ""), isReady: "false" }
+                        end
+                    )
+                  # Else if conditions exist → take the first element
+                  elif (.getComposition.status.conditions? | length > 0) then
+                    (
+                      .getComposition.status.conditions[0]
+                      | if .status == "True" then
+                          { name: "fa-check",                 color: "#52c41a", message: (.message // ""), isReady: "true" }
+                        elif .status == "False" then
+                          { name: "fa-triangle-exclamation", color: "#fa8c16", message: (.message // ""), isReady: "false" }
+                        else
+                          { name: "fa-circle",               color: "#6c757d", message: (.message // ""), isReady: "false" }
+                        end
+                    )
+                  # Else → fallback: status not available
+                  else
+                    { name: "fa-circle", color: "#6c757d", message: "Status not available", isReady: "false" }
+
+                  end
+                ),
+                icon: (
+                  if (([ "true" ] + ($nodes | map(.statusIcon.isReady))) | all(. == "true")) then
+                    { name: "fa-check", color: "#52c41a" }
+                  else
+                    { name: "fa-times", color: "#ff4d4f" }
+                  end
+                ),
+                kind: "{{ .Values.global.compositionKind }}",
+                name: "{{ .Values.global.compositionName }}",
+                namespace: "{{ .Values.global.compositionNamespace }}",
+                parentRefs: [ {} ],
+                resourceVersion: "",
+                uid: "{{ .Values.global.compositionId }}",
+                version: "{{ .Values.global.compositionGroup }}/{{ .Values.global.compositionInstalledVersion }}"
+              }
+            ] + $nodes
+          ),
+        compositionCompleted: (
+          ([ "true" ] + ($nodes | map(.statusIcon.isReady)))
+          | all(. == "true")
+        ),
+
+        # NEW: rows in the requested schema (array of rows → array of cells)
+        tableRows:
+          (
+            (
+              [
+                {
+                  date: .getComposition.metadata.creationTimestamp,
+                  statusIcon: (
+                    if (.getComposition.status.conditions? // [] | map(select(.type == "Ready")) | length) > 0 then
+                      (
+                        .getComposition.status.conditions[]
+                        | select(.type == "Ready")
+                        | if .status == "True" then
+                            { name: "fa-check",                 color: "#52c41a", message: (.message // ""), isReady: "true" }
+                          elif .status == "False" then
+                            { name: "fa-triangle-exclamation", color: "#fa8c16", message: (.message // ""), isReady: "false" }
+                          else
+                            { name: "fa-circle",               color: "#6c757d", message: (.message // ""), isReady: "false" }
+                          end
+                      )
+                    elif (.getComposition.status.conditions? | length > 0) then
+                      (
+                        .getComposition.status.conditions[0]
+                        | if .status == "True" then
+                            { name: "fa-check",                 color: "#52c41a", message: (.message // ""), isReady: "true" }
+                          elif .status == "False" then
+                            { name: "fa-triangle-exclamation", color: "#fa8c16", message: (.message // ""), isReady: "false" }
+                          else
+                            { name: "fa-circle",               color: "#6c757d", message: (.message // ""), isReady: "false" }
+                          end
+                      )
+                    else
+                      { name: "fa-circle", color: "#6c757d", message: "Status not available", isReady: "false" }
+                    end
+                  ),
+                  icon: (
+                    if (([ "true" ] + ($nodes | map(.statusIcon.isReady))) | all(. == "true")) then
+                      { name: "fa-check", color: "#52c41a" }
+                    else
+                      { name: "fa-times", color: "#ff4d4f" }
+                    end
+                  ),
+                  kind: "{{ .Values.global.compositionKind }}",
+                  name: "{{ .Values.global.compositionName }}",
+                  namespace: "{{ .Values.global.compositionNamespace }}",
+                  parentRefs: [ {} ],
+                  resourceVersion: "",
+                  uid: "{{ .Values.global.compositionId }}",
+                  version: "{{ .Values.global.compositionGroup }}/{{ .Values.global.compositionInstalledVersion }}"
+                }
+              ] + $nodes
+            )
+            | map(
+                [
+                  { valueKey: "icon",
+                    kind: "icon",
+                    stringValue: (.icon.name // "") 
+                  },
+                  { valueKey: "statusIcon",
+                    kind: "icon",
+                    stringValue: (.statusIcon.name // "") 
+                  },
+                  { valueKey: "statusMessage",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.statusIcon.message // "") 
+                  },
+                  { valueKey: "isReady",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.statusIcon.isReady // "") 
+                  },
+                  { valueKey: "name",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.name // "") 
+                  },
+                  { valueKey: "namespace",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.namespace // "") 
+                  },
+                  { valueKey: "kind",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.kind // "") 
+                  },
+                  { valueKey: "version",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.version // "") 
+                  },
+                  { valueKey: "date",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.date // "") 
+                  },
+                  { valueKey: "uid",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.uid // "") 
+                  }
+                ]
+              )
+          )
+      }

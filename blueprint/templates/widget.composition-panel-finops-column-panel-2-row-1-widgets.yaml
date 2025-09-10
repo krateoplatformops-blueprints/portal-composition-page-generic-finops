@@ -1,0 +1,48 @@
+kind: LineChart
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-linechart
+spec:
+  widgetData:
+  widgetData:
+    lines: []
+    xAxisName: ""
+    yAxisName: ""
+  widgetDataTemplate:
+    - forPath: lines
+      expression: ${ .metrics.lines }
+    - forPath: xAxisName
+      expression: ${ .metrics.xAxisName }
+    - forPath: yAxisName
+      expression: ${ .metrics.yAxisName }
+  apiRef:
+    name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-linechart
+    namespace: {{ .Values.global.compositionNamespace }}
+---
+kind: Table
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-table
+spec:
+  widgetData:
+    data: []
+    pageSize: 10
+    columns: 
+      - valueKey: "resourceid"
+        title: "Resource ID" 
+      - valueKey: "metricname"
+        title: "Metric Name"
+      - valueKey: "unit"
+        title: "Unit"
+      - valueKey: "optimizeFrom"
+        title: "Opt. Start (hh:mm)"
+      - valueKey: "optimizeTo"
+        title: "Opt. End (hh:mm)"
+      - valueKey: "resourceDelta"
+        title: "Opt. by (%)"
+  widgetDataTemplate:
+    - forPath: data
+      expression: ${ .getComposition }
+  apiRef:
+    name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-table
+    namespace: {{ .Values.global.compositionNamespace }}

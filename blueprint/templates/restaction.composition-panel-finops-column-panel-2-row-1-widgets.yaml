@@ -1,0 +1,105 @@
+apiVersion: templates.krateo.io/v1
+kind: RESTAction
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-linechart
+spec:
+  api:
+  - name: getComposition
+    path: "/apis/{{ .Values.global.compositionApiVersion }}/namespaces/{{ .Values.global.compositionNamespace }}/{{ .Values.global.compositionResource }}/{{ .Values.global.compositionName }}"
+    verb: GET
+    headers:
+    - 'Accept: application/json'
+  - name: metrics
+    dependsOn: 
+      name: getComposition
+    endpointRef: 
+      name: finops-database-handler-endpoint
+      namespace: krateo-system
+    path: "/compute/metrics"
+    verb: POST
+    payload: |
+      ${ {table_name: "{{ .Values.global.tableName }}_res", resource_name: .getComposition.spec.name, resource_group_name: .getComposition.spec.resourceGroupName } }
+    headers:
+    - 'Accept: application/json'
+    - 'Content-Type: application/json'
+---
+apiVersion: templates.krateo.io/v1
+kind: RESTAction
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-table
+spec:
+  api:
+  - name: getComposition
+    path: "/apis/{{ .Values.global.compositionApiVersion }}/namespaces/{{ .Values.global.compositionNamespace }}/{{ .Values.global.compositionResource }}/{{ .Values.global.compositionName }}"
+    verb: GET
+    headers:
+    - 'Accept: application/json'
+  filter: > 
+    {
+      getComposition: (
+        if (.getComposition | type) == "object" then
+          (
+            .getComposition.spec.optimization
+            | fromjson
+            | map(
+                [
+                  {
+                    valueKey: "resourceid",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: (.resourceid | split("/") | .[-1])
+                  },
+                  # metric name
+                  {
+                    valueKey: "metricname",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: .metricname
+                  },
+                  # unit
+                  {
+                    valueKey: "unit",
+                    kind: "jsonSchemaType",
+                    type: "string",
+                    stringValue: .unit
+                  },
+                  # optimizeFrom (if numeric -> decimalValue, else string)
+                  (
+                    if (.optimization.from | type) == "number" then
+                      {
+                        valueKey: "optimizeFrom",
+                        kind: "jsonSchemaType",
+                        type: "decimal",
+                        decimalValue: (.optimization.from | tostring)
+                      }
+                    else
+                      {
+                        valueKey: "optimizeFrom",
+                        kind: "jsonSchemaType",
+                        type: "string",
+                        stringValue: (.optimization.from | tostring)
+                      }
+                    end
+                  ),
+                  # resourceDelta (emit as decimalValue string)
+                  {
+                    valueKey: "resourceDelta",
+                    kind: "jsonSchemaType",
+                    type: "decimal",
+                    decimalValue: (.optimization.resourceDelta | tostring)
+                  },
+                  # optimizeTo (emit as decimalValue string)
+                  {
+                    valueKey: "optimizeTo",
+                    kind: "jsonSchemaType",
+                    type: "decimal",
+                    decimalValue: (.optimization.to | tostring)
+                  }
+                ]
+              )
+          )
+        else
+          []
+        end
+      )
+    }

@@ -1,0 +1,29 @@
+apiVersion: widgets.templates.krateo.io/v1beta1
+kind: Table
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-status-panel-table
+  namespace: {{ .Values.global.compositionNamespace }}
+spec:
+  widgetData:
+    allowedResources: {}
+    columns:
+    - title: Name
+      valueKey: name
+    - title: Namespace
+      valueKey: namespace
+    - title: Kind
+      valueKey: kind
+    - title: Version
+      valueKey: version
+    - title: Date
+      valueKey: date
+    - title: isReady 
+      valueKey: isReady
+    data: []
+    pageSize: 10
+  widgetDataTemplate:
+    - forPath: data
+      expression: ${ .tableRows }
+  apiRef:
+    name: {{ .Values.global.compositionName }}-composition-status
+    namespace: {{ .Values.global.compositionNamespace }}

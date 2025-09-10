@@ -1,0 +1,7 @@
+kind: Paragraph
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-2-paragraph
+spec:
+  widgetData:
+    text: "The resource utilization and the proposed optimization for the given resource."

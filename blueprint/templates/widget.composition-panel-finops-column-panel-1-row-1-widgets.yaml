@@ -1,0 +1,43 @@
+kind: PieChart
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-piechart
+spec:
+  widgetData:
+    series:
+      data: []
+      total: 0
+    description: ""
+    title: ""
+  widgetDataTemplate:
+  - expression: ${ .costs.series | .[0] | .data }
+    forPath: series.data
+  - expression: ${ .costs.series | .[0] | .total | tonumber | floor }
+    forPath: series.total
+  - expression: ${ .costs.title }
+    forPath: title
+  - expression: ${ .costs.description }
+    forPath: description
+  apiRef:
+    name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-piechart
+    namespace: {{ .Values.global.compositionNamespace }}
+---
+kind: LineChart
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-linechart
+spec:
+  widgetData:
+    lines: []
+    xAxisName: ""
+    yAxisName: ""
+  widgetDataTemplate:
+    - forPath: lines
+      expression: ${ .costsbreakdown.lines }
+    - forPath: xAxisName
+      expression: ${ .costsbreakdown.xAxisName }
+    - forPath: yAxisName
+      expression: ${ .costsbreakdown.yAxisName }
+  apiRef:
+    name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-linechart
+    namespace: {{ .Values.global.compositionNamespace }}
