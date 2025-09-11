@@ -96,13 +96,13 @@
           "type": "string"
         },
         "gracefullyPaused": {
-          "default": false,
+          "default": "false",
           "description": "composition graceful pause",
           "examples": [
             "false"
           ],
           "title": "gracefullyPaused",
-          "type": "boolean"
+          "type": "string"
         },
         "krateoNamespace": {
           "default": "krateo-system",
