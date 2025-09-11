@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Values.global.compositionNamespace }}
 spec: 
   widgetData:
+    allowedResources:
+    - panels
     actions: {}
     items:
       - resourceRefId: panel-1

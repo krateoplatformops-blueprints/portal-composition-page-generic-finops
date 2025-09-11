@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.global.compositionNamespace }}
 spec:
   widgetData:
-    allowedResources: {}
+    allowedResources: []
     columns:
     - title: Name
       valueKey: name
