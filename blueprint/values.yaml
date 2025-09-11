@@ -82,4 +82,4 @@ global:
   # type: string
   # examples: [false]
   # @schema 
-  gracefullyPaused: false
+  gracefullyPaused: "false"
