@@ -11,7 +11,7 @@ The Blueprint enables users to **add a *Composition* page** of the Krateo Compos
 - Registers a new Composition in the Krateo *Compositions* page
 - Supports namespace scoping and user permissions via RBAC (if configured)
 - Showcases generic informations about the Composition
-- Showcases FinOps data about the Virtual Machine
+- Showcases FinOps data about the Azure Virtual Machine
 
 ## Usage
 
