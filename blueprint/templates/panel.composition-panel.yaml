@@ -32,15 +32,24 @@ spec:
         - id: composition-click-action
           resourceRefId: composition-tablist
           type: navigate
+          path: /compositions/{{ .Values.global.compositionNamespace }}/{{ .Values.global.compositionName }}
   widgetDataTemplate:
     - forPath: icon.color
       expression: >
         ${
-          if .compositionCompleted == true then
-            "green"
-          else
-            "orange"
-          end
+          .allCompositionResources
+          | map(
+              if (.status.conditions? // [] | map(select(.type == "Ready")) | length) > 0 then
+                (.status.conditions[] | select(.type == "Ready") | .status == "True")
+              elif (.kind == "Application" and .apiVersion == "argoproj.io/v1alpha1") then
+                ((.status.health.status // "" | ascii_downcase) == "healthy")
+              elif (.status.conditions? | length > 0) then
+                (.status.conditions[0].status == "True")
+              else
+                false
+              end
+            ) as $isReadyList
+          | if ($isReadyList | all(.)) then "green" else "orange" end
         }
     - forPath: headerLeft
       expression: ${ ((.values?.status?.conditions // []) | map(select(.type == "Ready") | if .status == "False" then "Ready:False" elif .status == "True" then "Ready:True" else "Ready:Unknown" end) | first) // "Ready:Unknown" }
