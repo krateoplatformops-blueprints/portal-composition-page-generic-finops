@@ -14,7 +14,12 @@ spec:
         - id: delete
           resourceRefId: delete
           type: rest
-          onSuccessNavigateTo: /compositions
+          onEventNavigateTo:
+            eventReason: "CompositionDeleted"
+            url: "/compositions"
+            timeout: 50
+          headers:
+          - "Content-Type: application/json"
   resourcesRefs:
     items:
       - id: delete

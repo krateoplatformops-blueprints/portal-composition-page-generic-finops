@@ -25,4 +25,4 @@ keywords:
 sources:
   - https://github.com/krateoplatformops-blueprints/portal-composition-page-generic-finops
 annotations:
-  krateoSupportedVersion: ">= 2.5.1"
+  krateoSupportedVersion: ">= 2.6.0"
