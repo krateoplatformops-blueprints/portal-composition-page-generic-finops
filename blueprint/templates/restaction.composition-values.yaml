@@ -1,12 +1,12 @@
 apiVersion: templates.krateo.io/v1
 kind: RESTAction
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-values
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-values
   namespace: {{ .Values.global.compositionNamespace }}
 spec:
   api:
   - name: allCompositionResources
-    path: "/call?apiVersion=templates.krateo.io%2Fv1&resource=restactions&name={{ .Values.global.compositionName }}-composition-resources&namespace={{ .Values.global.compositionNamespace }}"
+    path: "/call?apiVersion=templates.krateo.io%2Fv1&resource=restactions&name={{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-resources&namespace={{ .Values.global.compositionNamespace }}"
     verb: GET
     endpointRef:
       name: snowplow-endpoint

@@ -1,7 +1,7 @@
 kind: Row
 apiVersion: widgets.templates.krateo.io/v1beta1
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1
   namespace: {{ .Values.global.compositionNamespace }}
 spec: 
   widgetData:
@@ -17,13 +17,13 @@ spec:
     items:
     - id:  cost-piechart
       apiVersion: widgets.templates.krateo.io/v1beta1
-      name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-piechart
+      name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-piechart
       namespace: {{ .Values.global.compositionNamespace }}
       resource: piecharts
       verb: GET
     - id: cost-linechart
       apiVersion: widgets.templates.krateo.io/v1beta1
-      name: {{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-linechart
+      name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-finops-column-panel-1-row-1-linechart
       namespace: {{ .Values.global.compositionNamespace }}
       resource: linecharts
       verb: GET

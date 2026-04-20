@@ -1,7 +1,7 @@
 apiVersion: widgets.templates.krateo.io/v1beta1
 kind: Table
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-status-panel-table
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-status-panel-table
   namespace: {{ .Values.global.compositionNamespace }}
 spec:
   widgetData:
@@ -44,6 +44,9 @@ spec:
                     else
                       {name:"fa-triangle-exclamation", color:"#fa8c16", message:(.status.health.status // ""), isReady:"false"}
                     end)
+                  elif ((.kind=="ConfigMap" and .apiVersion=="v1") or
+                        (.kind=="Service" and .apiVersion=="v1")) then
+                    {name:"fa-check", color:"#52c41a", message:"Status not provided", isReady:"true"}
                   elif (.status.conditions? | length > 0) then
                     (.status.conditions[0]
                     | if .status=="True"  then {name:"fa-check",                 color:"#52c41a", message:(.reason // ""), isReady:"true"}
@@ -117,5 +120,5 @@ spec:
           ])
         }
   apiRef:
-    name: {{ .Values.global.compositionName }}-composition-resources
+    name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-resources
     namespace: {{ .Values.global.compositionNamespace }}

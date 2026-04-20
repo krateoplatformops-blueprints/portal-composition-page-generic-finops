@@ -1,13 +1,13 @@
 kind: Panel
 apiVersion: widgets.templates.krateo.io/v1beta1
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-panel
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-panel
   namespace: {{ .Values.global.compositionNamespace }}
   labels:
     krateo.io/portal-page: compositions
 spec:
   apiRef:
-    name: {{ .Values.global.compositionName }}-composition-values
+    name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-values
     namespace: {{ .Values.global.compositionNamespace }}
   widgetData:
     clickActionId: composition-click-action
@@ -32,7 +32,7 @@ spec:
         - id: composition-click-action
           resourceRefId: composition-tablist
           type: navigate
-          path: /compositions/{{ .Values.global.compositionNamespace }}/{{ .Values.global.compositionName }}
+          path: /compositions/{{ .Values.global.compositionNamespace }}/{{ .Values.global.compositionKind | lower }}/{{ .Values.global.compositionName }}
   widgetDataTemplate:
     - forPath: icon.color
       expression: >
@@ -59,31 +59,31 @@ spec:
     items:
       - id: composition-panel-paragraph
         apiVersion: widgets.templates.krateo.io/v1beta1
-        name: {{ .Values.global.compositionName }}-composition-panel-markdown
+        name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-panel-markdown
         namespace: {{ .Values.global.compositionNamespace }}
         resource: markdowns
         verb: GET
       - id: composition-panel-button-delete
         apiVersion: widgets.templates.krateo.io/v1beta1
-        name: {{ .Values.global.compositionName }}-composition-panel-button-delete
+        name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-panel-button-delete
         namespace: {{ .Values.global.compositionNamespace }}
         resource: buttons
         verb: DELETE
       # - id: composition-panel-button-paused
       #   apiVersion: widgets.templates.krateo.io/v1beta1
-      #   name: {{ .Values.global.compositionName }}-composition-panel-button-paused
+      #   name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-panel-button-paused
       #   namespace: {{ .Values.global.compositionNamespace }}
       #   resource: buttons
       #   verb: PATCH
       - id: composition-panel-button-gracefullypaused
         apiVersion: widgets.templates.krateo.io/v1beta1
-        name: {{ .Values.global.compositionName }}-composition-panel-button-gracefullypaused
+        name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-panel-button-gracefullypaused
         namespace: {{ .Values.global.compositionNamespace }}
         resource: buttons
         verb: PATCH
       - id: composition-tablist
         apiVersion: widgets.templates.krateo.io/v1beta1
-        name: {{ .Values.global.compositionName }}-composition-tablist
+        name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-tablist
         namespace: {{ .Values.global.compositionNamespace }}
         resource: tablists
         verb: GET
