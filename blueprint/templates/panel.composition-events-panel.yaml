@@ -1,7 +1,7 @@
 kind: Panel
 apiVersion: widgets.templates.krateo.io/v1beta1
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-events-panel
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-events-panel
   namespace: {{ .Values.global.compositionNamespace }}
 spec:
   widgetData:
@@ -12,7 +12,7 @@ spec:
     items:
       - id: composition-events-panel-eventlist
         apiVersion: widgets.templates.krateo.io/v1beta1
-        name: {{ .Values.global.compositionName }}-composition-events-panel-eventlist
+        name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-events-panel-eventlist
         namespace: {{ .Values.global.compositionNamespace }}
         resource: eventlists
         verb: GET

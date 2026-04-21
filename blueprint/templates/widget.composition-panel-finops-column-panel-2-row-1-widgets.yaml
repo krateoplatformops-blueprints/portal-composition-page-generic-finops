@@ -1,7 +1,7 @@
 kind: LineChart
 apiVersion: widgets.templates.krateo.io/v1beta1
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-linechart
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-linechart
 spec:
   widgetData:
   widgetData:
@@ -16,13 +16,13 @@ spec:
     - forPath: yAxisName
       expression: ${ .metrics.yAxisName }
   apiRef:
-    name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-linechart
+    name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-linechart
     namespace: {{ .Values.global.compositionNamespace }}
 ---
 kind: Table
 apiVersion: widgets.templates.krateo.io/v1beta1
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-table
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-table
 spec:
   widgetData:
     allowedResources: []
@@ -45,5 +45,5 @@ spec:
     - forPath: data
       expression: ${ .getComposition }
   apiRef:
-    name: {{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-table
+    name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-finops-column-panel-2-row-1-table
     namespace: {{ .Values.global.compositionNamespace }}

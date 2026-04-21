@@ -1,7 +1,7 @@
 apiVersion: templates.krateo.io/v1
 kind: RESTAction
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-resources
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-resources
   namespace: {{ .Values.global.compositionNamespace }}
 spec:
   api:
@@ -52,8 +52,7 @@ spec:
         | map(select(
             (
               (.apiVersion | startswith("widgets.templates.krateo.io/")) or
-              (.apiVersion == "templates.krateo.io/v1" and .kind == "RESTAction") or
-              (.apiVersion == "v1" and .kind == "ConfigMap")
+              (.apiVersion == "templates.krateo.io/v1" and .kind == "RESTAction")
             ) | not
           ))
     }

@@ -1,7 +1,7 @@
 kind: Button
 apiVersion: widgets.templates.krateo.io/v1beta1
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-panel-button-gracefullypaused
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-panel-button-gracefullypaused
   namespace: {{ .Values.global.compositionNamespace }}
 spec:
   widgetData:
@@ -47,5 +47,5 @@ spec:
           end
         }
   apiRef:
-    name: {{ .Values.global.compositionName }}-composition-values
+    name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-values
     namespace: {{ .Values.global.compositionNamespace }}

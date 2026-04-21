@@ -1,37 +1,22 @@
 apiVersion: templates.krateo.io/v1
 kind: RESTAction
 metadata:
-  name: {{ .Values.global.compositionName }}-composition-events
+  name: {{ .Values.global.compositionKind | lower }}-{{ .Values.global.compositionName }}-composition-events
   namespace: {{ .Values.global.compositionNamespace }}
 spec:
   api:
   - name: getEvents
-    path: "/events/{{ .Values.global.compositionId }}?limit=50"
+    path: "/events?composition_id={{ .Values.global.compositionId }}&limit=200"
     verb: GET
     endpointRef:
-      name: eventsse-internal-endpoint
+      name: events-presenter-endpoint
       namespace: {{ .Values.global.krateoNamespace }}
     headers:
     - 'Accept: application/json'
     continueOnError: true
     errorKey: getEventsError
+    exportJwt: true
   filter: >
     {
-      list: (
-        (.getEvents // [])
-        | map(
-            .eventTime               = (.eventTime // "") |
-            .firstTimestamp          = (.firstTimestamp // "") |
-            .lastTimestamp           = (.lastTimestamp // "") |
-            .involvedObject.namespace = (.involvedObject.namespace // "") |
-            del(
-              .metadata.resourceVersion,
-              .metadata.annotations,
-              .metadata.labels,
-              .metadata.managedFields,
-              .involvedObject.resourceVersion,
-              .series
-            )
-          )
-      )
+      list: (.getEvents.resources // [])
     }
